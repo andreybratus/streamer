@@ -65,7 +65,7 @@ func (p Process) Spawn(path, URI string) *exec.Cmd {
 		"0",
 		"-copyts",
 		"-vcodec",
-		"copy",
+		"libx264",
 		"-movflags",
 		"frag_keyframe+empty_moov",
 	}
