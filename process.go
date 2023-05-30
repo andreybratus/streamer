@@ -25,6 +25,7 @@ type ProcessLoggingOpts struct {
 type Process struct {
 	keepFiles bool
 	audio     bool
+	codec     string
 }
 
 // Type check
@@ -34,8 +35,9 @@ var _ IProcess = (*Process)(nil)
 func NewProcess(
 	keepFiles bool,
 	audio bool,
+	codec string,
 ) *Process {
-	return &Process{keepFiles, audio}
+	return &Process{keepFiles, audio, codec}
 }
 
 // getHLSFlags are for getting the flags based on the config context
@@ -65,7 +67,7 @@ func (p Process) Spawn(path, URI string) *exec.Cmd {
 		"0",
 		"-copyts",
 		"-vcodec",
-		"libx264",
+		p.codec,
 		"-movflags",
 		"frag_keyframe+empty_moov",
 	}

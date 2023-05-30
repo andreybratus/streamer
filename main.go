@@ -27,6 +27,7 @@ type IStream interface {
 type Stream struct {
 	ID          string               `json:"id"`
 	Path        string               `json:"path"`
+	Codec       string               `json:"codec"`
 	Running     bool                 `json:"running"`
 	CMD         *exec.Cmd            `json:"-"`
 	Process     IProcess             `json:"-"`
@@ -46,6 +47,7 @@ var _ IStream = (*Stream)(nil)
 // NewStream creates a new transcoding process for ffmpeg
 func NewStream(
 	URI string,
+	codec string,
 	storingDirectory string,
 	keepFiles bool,
 	audio bool,
@@ -59,7 +61,7 @@ func NewStream(
 		logrus.Error(err)
 		return nil, ""
 	}
-	process := NewProcess(keepFiles, audio)
+	process := NewProcess(keepFiles, audio, codec)
 	cmd := process.Spawn(path, URI)
 
 	// Create nil pointer in case logging is not enabled
@@ -79,6 +81,7 @@ func NewStream(
 	stream := Stream{
 		ID:        id,
 		CMD:       cmd,
+		Codec:     codec,
 		Process:   process,
 		Mux:       &sync.Mutex{},
 		Path:      fmt.Sprintf("/%s/index.m3u8", filepath.Join("stream", id)),
